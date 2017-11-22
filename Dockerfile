@@ -1,42 +1,29 @@
-FROM node:6.3
-# Maintainer
-# ----------
-MAINTAINER babim <babim@matmagoc.com>
-
-RUN rm -f /etc/motd && \
-    echo "---" > /etc/motd && \
-    echo "Support by Duc Anh Babim. Contact: ducanh.babim@yahoo.com" >> /etc/motd && \
-    echo "---" >> /etc/motd && \
-    touch "/(C) Babim"
-#envi
-ENV LC_ALL en_US.UTF-8
-ENV TZ Asia/Ho_Chi_Minh
+FROM babim/gekko
 
 # envi app
 ENV HOST localhost
 ENV PORT 3000
 
-# babim
-RUN apt-get update && apt-get install nano htop telnet git wget python python-pip -y
-RUN npm install mongojs --save && npm install postgresql && npm install random-ext
-# babim closed
+# install ssh
+RUN  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
+	apt-get update && apt-get install -y \
+	    locales wget nano openssh-server
 
-# prepare startup
-RUN mkdir -p /start/ \
-WORKDIR /start
-    
-# Bundle app source
-RUN git clone https://github.com/askmike/gekko.git && cd gekko && npm install --production && \
-    git clone https://github.com/gekkowarez/gekkoga.git && cd gekkoga && npm install && cd .. && \
-    git clone https://github.com/Gab0/gekkoJaponicus && cd gekkoJaponicus && pip -r requirements.txt && cd .. && \
-    cd .. && \
-    npm install -g node-gyp && \
-    cd $(npm root -g)/npm && npm install fs-extra && sed -i -e s/graceful-fs/fs-extra/ -e s/fs.rename/fs.move/ ./lib/utils/rename.js
-RUN npm install redis@0.10.0 talib@1.0.2 pg@6.1.0
+RUN dpkg-reconfigure locales && \
+    locale-gen en_US.UTF-8 && \
+    update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 
-# Create app directory
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+RUN mkdir /var/run/sshd
+# set password root is root
+RUN echo 'root:root' | chpasswd
+# allow root ssh
+RUN sed -i -e '/^PermitRootLogin/s/^.*$/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# SSH login fix. Otherwise user is kicked off after login
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" >> /etc/profile
 
 # clean
 RUN apt-get clean && \
@@ -50,8 +37,10 @@ RUN apt-get clean && \
 # make startup
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+COPY runssh.sh /runssh.sh
+RUN chmod +x /runssh.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-EXPOSE 3000
+EXPOSE 3000 22
 CMD [ "npm", "start" ]
