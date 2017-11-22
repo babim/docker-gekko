@@ -24,19 +24,20 @@ RUN npm install mongojs --save && npm install postgresql && npm install random-e
 # prepare startup
 RUN mkdir -p /start/ \
 WORKDIR /start
-    
+
 # Bundle app source
 RUN git clone https://github.com/askmike/gekko.git && cd gekko && npm install --production && \
     git clone https://github.com/gekkowarez/gekkoga.git && cd gekkoga && npm install && cd ..
 #RUN git clone https://github.com/Gab0/gekkoJaponicus && cd gekkoJaponicus && pip install -r requirements.txt && cd ..
-RUN cd .. && \
-    npm install -g node-gyp && \
-    cd $(npm root -g)/npm && npm install fs-extra && sed -i -e s/graceful-fs/fs-extra/ -e s/fs.rename/fs.move/ ./lib/utils/rename.js
-RUN npm install redis@0.10.0 talib@1.0.2 pg@6.1.0
 
 # Create app directory
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
+
+RUN wget https://raw.githubusercontent.com/askmike/gekko/stable/package.json && \
+    npm install -g node-gyp && \
+    cd $(npm root -g)/npm && npm install fs-extra && sed -i -e s/graceful-fs/fs-extra/ -e s/fs.rename/fs.move/ ./lib/utils/rename.js
+RUN npm install redis@0.10.0 talib@1.0.2 pg@6.1.0
 
 # clean
 RUN apt-get clean && \
