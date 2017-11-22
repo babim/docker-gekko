@@ -17,7 +17,7 @@ ENV HOST localhost
 ENV PORT 3000
 
 # babim
-RUN apt-get update && apt-get install nano htop telnet git wget python python-pip -y
+RUN apt-get update && apt-get install nano htop telnet git wget python python-pip python-dev -y
 RUN npm install mongojs --save && npm install postgresql && npm install random-ext
 # babim closed
 
