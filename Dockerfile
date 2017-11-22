@@ -1,5 +1,18 @@
 FROM node:6.3
+# Maintainer
+# ----------
+MAINTAINER babim <babim@matmagoc.com>
 
+RUN rm -f /etc/motd && \
+    echo "---" > /etc/motd && \
+    echo "Support by Duc Anh Babim. Contact: ducanh.babim@yahoo.com" >> /etc/motd && \
+    echo "---" >> /etc/motd && \
+    touch "/(C) Babim"
+#envi
+ENV LC_ALL en_US.UTF-8
+ENV TZ Asia/Ho_Chi_Minh
+
+# envi app
 ENV HOST localhost
 ENV PORT 3000
 
