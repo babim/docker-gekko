@@ -22,12 +22,11 @@ RUN npm install mongojs --save && npm install postgresql && npm install random-e
 # babim closed
 
 # prepare startup
-RUN mkdir -p /start/gekko \
-WORKDIR /start/gekko
+RUN mkdir -p /start/ \
+WORKDIR /start
     
 # Bundle app source
-RUN git clone https://github.com/askmike/gekko.git && git clone https://github.com/gekkowarez/gekkoga.git  && \
-    mv gekko/* . && rm -rf gekko/
+RUN git clone https://github.com/askmike/gekko.git && cd gekko && git clone https://github.com/gekkowarez/gekkoga.git
 
 # Create app directory
 RUN mkdir -p /usr/src/app
