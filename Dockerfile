@@ -23,6 +23,7 @@ RUN npm install redis@0.10.0 talib@1.0.2 pg@6.1.0
 RUN git clone https://github.com/askmike/gekko.git && git clone https://github.com/gekkowarez/gekkoga.git  && \
     mv gekko/* .
 
+# prepare startup
 RUN mkdir -p /start/gekko \
     && mv /usr/src/app/* /start/gekko
 
@@ -35,8 +36,11 @@ RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
 rm -f /etc/dpkg/dpkg.cfg.d/02apt-speedup
 
-EXPOSE 3000
-RUN chmod +x /usr/src/app/docker-entrypoint.sh
-ENTRYPOINT ["/usr/src/app/docker-entrypoint.sh"]
+# make starup
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
+ENTRYPOINT ["/entrypoint.sh"]
+
+EXPOSE 3000
 CMD [ "npm", "start" ]
