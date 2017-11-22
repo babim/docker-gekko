@@ -28,7 +28,7 @@ WORKDIR /start
 # Bundle app source
 RUN git clone https://github.com/askmike/gekko.git && cd gekko && npm install --production && \
     git clone https://github.com/gekkowarez/gekkoga.git && cd gekkoga && npm install && cd .. && \
-    git clone https://github.com/Gab0/gekkoJaponicus && cd gekkoJaponicus && pip -r requirements.txt && cd .. && \
+    git clone https://github.com/Gab0/gekkoJaponicus && cd gekkoJaponicus && pip install -r requirements.txt && cd .. && \
     cd .. && \
     npm install -g node-gyp && \
     cd $(npm root -g)/npm && npm install fs-extra && sed -i -e s/graceful-fs/fs-extra/ -e s/fs.rename/fs.move/ ./lib/utils/rename.js
