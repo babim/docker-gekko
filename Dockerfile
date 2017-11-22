@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 
 # babim
 RUN apt-get update && apt-get install nano htop telnet git wget -y
-RUN npm install mongojs --save && npm install random-ext
+RUN npm install mongojs --save && npm install postgresql && npm install random-ext
 # babim closed
 
 # Install app dependencies
