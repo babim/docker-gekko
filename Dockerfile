@@ -21,7 +21,7 @@ RUN npm install redis@0.10.0 talib@1.0.2 pg@6.1.0
 
 # Bundle app source
 RUN git clone https://github.com/askmike/gekko.git && git clone https://github.com/gekkowarez/gekkoga.git  && \
-    mv gekko/* .
+    mv gekko/* . && rm -rf gekko/
 
 # prepare startup
 RUN mkdir -p /start/gekko \
