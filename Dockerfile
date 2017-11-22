@@ -47,7 +47,7 @@ RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     rm -f /etc/dpkg/dpkg.cfg.d/02apt-speedup
 
-# make starup
+# make startup
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
