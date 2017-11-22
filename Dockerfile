@@ -16,14 +16,22 @@ ENV TZ Asia/Ho_Chi_Minh
 ENV HOST localhost
 ENV PORT 3000
 
-# Create app directory
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-
 # babim
 RUN apt-get update && apt-get install nano htop telnet git wget -y
 RUN npm install mongojs --save && npm install postgresql && npm install random-ext
 # babim closed
+
+# prepare startup
+RUN mkdir -p /start/gekko \
+WORKDIR /start/gekko
+    
+# Bundle app source
+RUN git clone https://github.com/askmike/gekko.git && git clone https://github.com/gekkowarez/gekkoga.git  && \
+    mv gekko/* . && rm -rf gekko/
+
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
 # Install app dependencies
 RUN wget https://github.com/askmike/gekko/raw/stable/package.json
@@ -32,14 +40,6 @@ RUN cd $(npm root -g)/npm && npm install fs-extra && sed -i -e s/graceful-fs/fs-
 RUN npm install --production
 RUN npm install redis@0.10.0 talib@1.0.2 pg@6.1.0
 
-# Bundle app source
-RUN git clone https://github.com/askmike/gekko.git && git clone https://github.com/gekkowarez/gekkoga.git  && \
-    mv gekko/* . && rm -rf gekko/
-
-# prepare startup
-RUN mkdir -p /start/gekko \
-    && mv /usr/src/app/* /start/gekko
-
 # clean
 RUN apt-get clean && \
     apt-get autoclean && \
@@ -47,7 +47,7 @@ RUN apt-get clean && \
     rm -rf /build && \
     rm -rf /tmp/* /var/tmp/* && \
     rm -rf /var/lib/apt/lists/* && \
-rm -f /etc/dpkg/dpkg.cfg.d/02apt-speedup
+    rm -f /etc/dpkg/dpkg.cfg.d/02apt-speedup
 
 # make starup
 COPY entrypoint.sh /entrypoint.sh
