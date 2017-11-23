@@ -9,7 +9,6 @@ RUN rm -f /etc/motd && \
     echo "---" >> /etc/motd && \
     touch "/(C) Babim"
 #envi
-ENV LC_ALL en_US.UTF-8
 ENV TZ Asia/Ho_Chi_Minh
 
 # envi app
@@ -21,18 +20,14 @@ RUN apt-get update && apt-get install nano htop telnet git wget python python-pi
 RUN npm install mongojs --save && npm install postgresql && npm install random-ext
 # babim closed
 
-# prepare startup
-RUN mkdir -p /start/ \
-WORKDIR /start
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
 # Bundle app source
 RUN git clone https://github.com/askmike/gekko.git && cd gekko && npm install --production && \
     git clone https://github.com/gekkowarez/gekkoga.git && cd gekkoga && npm install && cd ..
 #RUN git clone https://github.com/Gab0/gekkoJaponicus && cd gekkoJaponicus && pip install -r requirements.txt && cd ..
-
-# Create app directory
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
 
 RUN wget https://raw.githubusercontent.com/askmike/gekko/stable/package.json && \
     npm install -g node-gyp && \
