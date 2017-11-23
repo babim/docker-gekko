@@ -25,7 +25,7 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # Bundle app source
-RUN git clone https://github.com/askmike/gekko.git && cd gekko && npm install --production && \
+RUN git clone https://github.com/askmike/gekko.git && cd gekko && npm install --production && cp sample-config.js config.js && \
     git clone https://github.com/gekkowarez/gekkoga.git && cd gekkoga && npm install && cd ..
 #RUN git clone https://github.com/Gab0/gekkoJaponicus && cd gekkoJaponicus && pip install -r requirements.txt && cd ..
 
