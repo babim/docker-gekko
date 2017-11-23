@@ -17,7 +17,6 @@ ENV PORT 3000
 
 # babim
 RUN apt-get update && apt-get install nano htop telnet git wget python python-pip python-dev -y
-RUN npm install mongojs --save && npm install postgresql && npm install random-ext
 # babim closed
 
 # Create app directory
@@ -33,7 +32,8 @@ RUN git clone https://github.com/askmike/gekko.git && mv gekko/* . && rm -rf gek
 RUN wget https://raw.githubusercontent.com/askmike/gekko/stable/package.json && \
     npm install -g node-gyp && \
     cd $(npm root -g)/npm && npm install fs-extra && sed -i -e s/graceful-fs/fs-extra/ -e s/fs.rename/fs.move/ ./lib/utils/rename.js
-RUN npm install redis@0.10.0 talib@1.0.2 pg@6.1.0
+RUN npm install redis@0.10.0 talib@1.0.2 pg@6.1.0 && \
+    npm install mongojs --save && npm install postgresql && npm install random-ext
 
 # clean
 RUN apt-get clean && \
