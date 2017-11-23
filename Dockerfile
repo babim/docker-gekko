@@ -14,6 +14,7 @@ ENV TZ Asia/Ho_Chi_Minh
 # envi app
 ENV HOST localhost
 ENV PORT 3000
+ENV ADAPTER sqlite
 
 # babim
 RUN apt-get update && apt-get install nano htop telnet git wget -y
