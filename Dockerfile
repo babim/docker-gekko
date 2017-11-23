@@ -16,7 +16,8 @@ ENV HOST localhost
 ENV PORT 3000
 
 # babim
-RUN apt-get update && apt-get install nano htop telnet git wget python python-pip python-dev -y
+RUN apt-get update && apt-get install nano htop telnet git wget -y
+#RUN apt-get install -y python python-pip python-dev
 # babim closed
 
 # Create app directory
