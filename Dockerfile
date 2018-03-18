@@ -1,4 +1,5 @@
-FROM node:8-alpine
+FROM node:8
+MAINTAINER babim <babim@matmagoc.com>
 
 ENV HOST localhost
 ENV PORT 3000
@@ -12,7 +13,7 @@ RUN npm install -g --production node-gyp && \
     npm cache clean --force
 
 # Install app dependencies
-RUN apk add --no-cache wget git bash nano
+RUN apt-get update && apt-get install -y wget git bash nano
 RUN wget https://raw.githubusercontent.com/askmike/gekko/stable/package.json
 RUN npm install --production && \
     npm install --production redis@0.10.0 talib@1.0.2 tulind@0.8.7 pg && \
@@ -22,6 +23,15 @@ RUN npm install --production && \
 # Bundle app source
 RUN git clone https://github.com/askmike/gekko.git && mv gekko/* . && rm -rf gekko && \
     npm install --production && cp sample-config.js config.js
+
+# clean
+RUN apt-get clean && \
+    apt-get autoclean && \
+    apt-get autoremove -y && \
+    rm -rf /build && \
+    rm -rf /tmp/* /var/tmp/* && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -f /etc/dpkg/dpkg.cfg.d/02apt-speedup
 
 EXPOSE 3000
 # make startup
