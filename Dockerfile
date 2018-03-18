@@ -1,56 +1,34 @@
-FROM node:6.3
-# Maintainer
-# ----------
+FROM node:8-alpine
 MAINTAINER babim <babim@matmagoc.com>
 
-RUN rm -f /etc/motd && \
-    echo "---" > /etc/motd && \
-    echo "Support by Duc Anh Babim. Contact: ducanh.babim@yahoo.com" >> /etc/motd && \
-    echo "---" >> /etc/motd && \
-    touch "/(C) Babim"
-#envi
-ENV TZ Asia/Ho_Chi_Minh
-
-# envi app
 ENV HOST localhost
 ENV PORT 3000
-ENV ADAPTER sqlite
-
-# babim
-RUN apt-get update && apt-get install nano htop telnet git wget -y
-#RUN apt-get install -y python python-pip python-dev
-# babim closed
 
 # Create app directory
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
+# Install GYP dependencies globally, will be used to code build other dependencies
+RUN npm install -g --production node-gyp && \
+    npm cache clean --force
+
+# Install app dependencies
+RUN apk add --no-cache wget git bash nano
+RUN wget https://raw.githubusercontent.com/askmike/gekko/stable/package.json
+RUN npm install --production && \
+    npm install --production redis@0.10.0 talib@1.0.2 tulind@0.8.7 pg && \
+    npm install mongojs --save && npm install postgresql && npm install mongodb && \
+    npm cache clean --force
+
 # Bundle app source
 RUN git clone https://github.com/askmike/gekko.git && mv gekko/* . && rm -rf gekko && \
-    npm install --production && cp sample-config.js config.js && \
-    git clone https://github.com/gekkowarez/gekkoga.git && cd gekkoga && npm install random-ext && npm install && cd ..
-#RUN git clone https://github.com/Gab0/gekkoJaponicus && cd gekkoJaponicus && pip install -r requirements.txt && cd ..
+    npm install --production && cp sample-config.js config.js
 
-RUN wget https://raw.githubusercontent.com/askmike/gekko/stable/package.json && \
-    npm install -g node-gyp && \
-    cd $(npm root -g)/npm && npm install fs-extra && sed -i -e s/graceful-fs/fs-extra/ -e s/fs.rename/fs.move/ ./lib/utils/rename.js
-RUN npm install redis@0.10.0 talib@1.0.2 pg@6.1.0 && \
-    npm install mongojs --save && npm install postgresql && npm install mongodb
-
-# clean
-RUN apt-get clean && \
-    apt-get autoclean && \
-    apt-get autoremove -y && \
-    rm -rf /build && \
-    rm -rf /tmp/* /var/tmp/* && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -f /etc/dpkg/dpkg.cfg.d/02apt-speedup
-
+EXPOSE 3000
 # make startup
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-EXPOSE 3000
 CMD [ "npm", "start" ]
