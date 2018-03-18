@@ -1,5 +1,4 @@
 FROM node:8-alpine
-MAINTAINER babim <babim@matmagoc.com>
 
 ENV HOST localhost
 ENV PORT 3000
